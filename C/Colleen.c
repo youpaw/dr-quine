@@ -1,13 +1,13 @@
 #include <stdio.h>
-#define N_LINES 40
-#define SRC_LINE 9
+#define N_LINES 39
+#define SRC_LINE 7
 /*
 	Program source code
 */
 char	g_src_code[N_LINES][51] = {
 	{"#include <stdio.h>"},
-	{"#define N_LINES 41"},
-	{"#define SRC_LINE 9"},
+	{"#define N_LINES 39"},
+	{"#define SRC_LINE 7"},
 	{"/*"},
 	{"	Program source code"},
 	{"*/"},
