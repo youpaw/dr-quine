@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define N_LINES 55
+#define N_LINES 57
 #define SRC_LINE 6
 #define CNT_LINE 24
 char	g_src_code[N_LINES][80] = {
 		{"#include <stdio.h>"},
 		{"#include <stdlib.h>"},
-		{"#define N_LINES 55"},
+		{"#define N_LINES 57"},
 		{"#define SRC_LINE 6"},
 		{"#define CNT_LINE 24"},
 		{"char	g_src_code[N_LINES][80] = {"},
@@ -29,13 +29,13 @@ char	g_src_code[N_LINES][80] = {
 		{"int	main(void)"},
 		{"{"},
 		{"	int i = 5;"},
-		{"	char filename[20];"},
+		{"	char srcname[20];"},
 		{"	char binname[20];"},
-		{"	char cmdname[60];"},
+		{"	char cmdname[80];"},
 		{"	i--;"},
-		{"	sprintf(filename, \"Sully_%d.c\", i);"},
+		{"	sprintf(srcname, \"Sully_%d.c\", i);"},
 		{"	sprintf(binname, \"Sully_%d\", i);"},
-		{"	FILE *f = fopen(filename, \"w\");"},
+		{"	FILE *f = fopen(srcname, \"w\");"},
 		{"	if (!f)"},
 		{"		return (1);"},
 		{"	for (int l=0; l<SRC_LINE; l++)"},
@@ -54,10 +54,12 @@ char	g_src_code[N_LINES][80] = {
 		{"			fprintf(f, \"%s\\n\", g_src_code[l]);"},
 		{"	}"},
 		{"	fclose(f);"},
-		{"	sprintf(cmdname, \"clang -o %s %s && ./%s\", binname, filename, binname);"},
-		{"	if (i > 0)"},
-		{"		return (system(cmdname));"},
-		{"	return (0);"},
+		{"	sprintf(cmdname, \"clang -o %s %s\", binname, srcname);"},
+		{"	int rc = system(cmdname);"},
+		{"	sprintf(cmdname, \"./%s\", binname);"},
+		{"	if (!rc && i > 0)"},
+		{"		rc = system(cmdname);"},
+		{"	return (rc);"},
 		{"}"},
 };
 
@@ -78,13 +80,13 @@ static void	fprint_esc(FILE *f, char *s)
 int	main(void)
 {
 	int i = 5;
-	char filename[20];
+	char srcname[20];
 	char binname[20];
-	char cmdname[60];
+	char cmdname[80];
 	i--;
-	sprintf(filename, "Sully_%d.c", i);
+	sprintf(srcname, "Sully_%d.c", i);
 	sprintf(binname, "Sully_%d", i);
-	FILE *f = fopen(filename, "w");
+	FILE *f = fopen(srcname, "w");
 	if (!f)
 		return (1);
 	for (int l=0; l<SRC_LINE; l++)
@@ -103,8 +105,10 @@ int	main(void)
 			fprintf(f, "%s\n", g_src_code[l]);
 	}
 	fclose(f);
-	sprintf(cmdname, "clang -o %s %s && ./%s", binname, filename, binname);
-	if (i > 0)
-		return (system(cmdname));
-	return (0);
+	sprintf(cmdname, "clang -o %s %s", binname, srcname);
+	int rc = system(cmdname);
+	sprintf(cmdname, "./%s", binname);
+	if (!rc && i > 0)
+		rc = system(cmdname);
+	return (rc);
 }
